@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Savest - Futuristic Investment Platform</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Space Grotesk', sans-serif;
+      background: radial-gradient(circle at 20% 30%, #0f0c29, #302b63, #24243e);
+      color: #fff;
+    }
+    .container {
+      max-width: 900px;
+      margin: auto;
+      padding: 2rem;
+    }
+    .brand {
+      font-size: 2rem;
+      font-weight: 700;
+      text-align: center;
+      color: #0ff;
+      text-shadow: 0 0 10px #0ff;
+      margin-bottom: 1rem;
+    }
+    .futuristic-card {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 1.5rem;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 0 20px rgba(0, 255, 255, 0.1);
+    }
+    .text-glow {
+      text-shadow: 0 0 6px #00f7ff, 0 0 12px #00f7ff;
+    }
+    .neon-button {
+      background: linear-gradient(135deg, #00f0ff, #00ccff);
+      color: #000;
+      font-weight: bold;
+      padding: 0.75rem 1.5rem;
+      border-radius: 1rem;
+      box-shadow: 0 0 10px #0ff;
+      transition: transform 0.2s, box-shadow 0.2s;
+      cursor: pointer;
+      border: none;
+      margin: 0.5rem;
+    }
+    .neon-button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 20px #0ff;
+    }
+    .fade-in {
+      animation: fadeIn 1s ease-in-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .hidden { display: none; }
+    .response-output {
+      background: #222;
+      padding: 1rem;
+      margin-top: 1rem;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="brand">🚀 Savest</div>
+
+    <div id="login" class="futuristic-card fade-in">
+      <h1 class="text-glow">Welcome to Savest</h1>
+      <p>Click below to access your smart investment dashboard.</p>
+      <div style="text-align: center; margin-top: 2rem;">
+        <button class="neon-button" onclick="navigate('dashboard')">🔓 Enter Savest</button>
+      </div>
+    </div>
+
+    <div id="dashboard" class="futuristic-card fade-in hidden">
+      <h2 class="text-glow">Dashboard</h2>
+      <p>Track your portfolio, manage your goals, and stay updated with market data in real-time.</p>
+      <button class="neon-button" onclick="navigate('portfolio')">Portfolio</button>
+      <button class="neon-button" onclick="navigate('goals')">Goals</button>
+      <button class="neon-button" onclick="navigate('market')">Live Market</button>
+      <button class="neon-button" onclick="navigate('extras')">More Features</button>
+    </div>
+
+    <div id="portfolio" class="futuristic-card fade-in hidden">
+      <h3 class="text-glow">Portfolio Overview</h3>
+      <canvas id="portfolioChart"></canvas>
+      <button class="neon-button" onclick="navigate('dashboard')">Back</button>
+    </div>
+
+    <div id="goals" class="futuristic-card fade-in hidden">
+      <h3 class="text-glow">Investment Goals</h3>
+      <form id="goalForm">
+        <label>Goal Name</label>
+        <input type="text" id="goalName" required>
+        <label>Target Amount</label>
+        <input type="number" id="goalAmount" required>
+        <label>Duration (Years)</label>
+        <input type="number" id="goalYears" required>
+        <button type="submit" class="neon-button">Save Goal</button>
+      </form>
+      <div id="goalResult" class="response-output"></div>
+      <button class="neon-button" onclick="navigate('dashboard')">Back</button>
+    </div>
+
+    <div id="market" class="futuristic-card fade-in hidden">
+      <h3 class="text-glow">Live Market Data</h3>
+      <canvas id="marketChart"></canvas>
+      <button class="neon-button" onclick="navigate('dashboard')">Back</button>
+    </div>
+
+    <div id="extras" class="futuristic-card fade-in hidden">
+      <h2 class="text-glow">Advanced Tools</h2>
+
+      <div class="futuristic-card">
+        <h4>📊 Comparison Tool</h4>
+        <canvas id="comparisonChart" width="400" height="200"></canvas>
+      </div>
+
+      <div class="futuristic-card">
+        <h4>📈 AI Risk Analyzer</h4>
+        <p>Choose your age group and get a risk profile.</p>
+        <select id="ageGroup">
+          <option value="20">Under 30</option>
+          <option value="40">30-50</option>
+          <option value="60">50+</option>
+        </select>
+        <button class="neon-button" onclick="analyzeRisk()">Analyze</button>
+        <div id="riskOutput" class="response-output"></div>
+      </div>
+
+      <div class="futuristic-card">
+        <h4>📌 Watchlist</h4>
+        <input type="text" id="watchInput" placeholder="Enter stock or crypto name">
+        <button class="neon-button" onclick="addWatchlist()">Add to Watchlist</button>
+        <ul id="watchlistDisplay"></ul>
+      </div>
+
+      <button class="neon-button" onclick="navigate('dashboard')">Back</button>
+    </div>
+  </div>
+
+  <script>
+    function navigate(to) {
+      const sections = ['login', 'dashboard', 'portfolio', 'goals', 'market', 'extras'];
+      sections.forEach(id => document.getElementById(id).classList.add('hidden'));
+      document.getElementById(to).classList.remove('hidden');
+    }
+
+    document.getElementById('goalForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const goalName = document.getElementById('goalName').value;
+      const amount = parseFloat(document.getElementById('goalAmount').value);
+      const years = parseInt(document.getElementById('goalYears').value);
+
+      try {
+        const res = await fetch('http://localhost:3000/api/goals', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ goalName, amount, years })
+        });
+        const data = await res.json();
+        if (!res.ok) return document.getElementById('goalResult').innerText = `❌ Could not save goal. ${data.error}`;
+
+        document.getElementById('goalResult').innerHTML = `
+          ✅ Goal: <strong>${data.goalName}</strong><br>
+          🎯 Target: ₹${data.total} in ${data.years} years<br>
+          💸 Monthly: ₹${data.monthly}<br>
+          📆 Quarterly: ₹${data.quarterly}<br>
+          📅 Yearly: ₹${data.yearly}<br>
+          📈 Weekly: ₹${data.weekly}<br>
+          🕒 Daily: ₹${data.daily}`;
+      } catch (err) {
+        document.getElementById('goalResult').innerText = '❌ Failed to connect to server.';
+      }
+    });
+
+    function analyzeRisk() {
+      const age = document.getElementById('ageGroup').value;
+      let message = '';
+      if (age <= 30) message = '📊 High-risk recommended (Stocks, Crypto)';
+      else if (age <= 50) message = '📈 Balanced risk (Stocks + Mutual Funds)';
+      else message = '🔒 Low risk preferred (FDs, Bonds, PPF)';
+      document.getElementById('riskOutput').innerText = message;
+    }
+
+    function addWatchlist() {
+      const item = document.getElementById('watchInput').value;
+      if (item) {
+        const li = document.createElement('li');
+        li.textContent = item;
+        document.getElementById('watchlistDisplay').appendChild(li);
+        document.getElementById('watchInput').value = '';
+      }
+    }
+
+    // Chart.js Comparison
+    const ctx = document.getElementById('comparisonChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['Stocks', 'Mutual Funds', 'FDs'],
+        datasets: [{
+          label: 'Expected Return %',
+          data: [12, 8, 6],
+          backgroundColor: ['#00f7ff80', '#00ffcc80', '#ffaa0080']
+        }]
+      },
+      options: {
+        scales: { y: { beginAtZero: true } }
+      }
+    });
+  </script>
+</body>
+</html>
